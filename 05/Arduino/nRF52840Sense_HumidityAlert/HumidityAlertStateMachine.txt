@@ -1,0 +1,25 @@
+Humidity Alert State Machine
+
+b:  user button
+h:  humidity %
+bl: blue LED
+rl: red LED
+t0: time
+
++----+                                         +----+
+| S0 +---pressed(b)|treshold=h+10%;rl=on------>+ S1 |
++--+-+                                         +-+--+
+   ^                                             |
+   |                                      !pressed(b)
+millis()-t0>1000|rl=off                          |
+   |                                             v
++----+                                         +----+
+| S5 |                                         | S2 |
++----+                                         +----+
+   ^                                             |   
+   |                         h>threshold|rl=off;bl=on
+!pressed(b)                                      |
+   |                                             v   
++--+-+                                         +-+--+
+| S4 |<--pressed(b)|rl=on;bl=off;t0=millis()---+ S3 |
++----+                                         +----+

@@ -1,35 +1,45 @@
-#include "Adafruit_TinyUSB.h" // Fix https://github.com/adafruit/Adafruit_nRF52_Arduino/issues/653
+/*
+  DigitalReadSerial
 
-int buttonPin = 7; // onboard button
+  Reads a digital input on pin 2, prints the result to the Serial Monitor
+
+  This example code is in the public domain.
+
+  https://docs.arduino.cc/built-in-examples/basics/DigitalReadSerial/
+*/
+#include <Adafruit_TinyUSB.h>  // provides Serial on nRF52840
+
+int pushButton = 7; // onboard button
 int ledPin = 4; // onboard, blue LED
 
-int s = 0; // state
+int state = 0;
 
-int pressed(int value) {
-  //return value == HIGH; // standard, active high
-  return value == LOW; // inverted, active low
-}
-
+// the setup routine runs once when you press reset:
 void setup() {
-  pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(pushButton, INPUT_PULLUP);
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, LOW);
   Serial.begin(115200);
 }
 
+int pressed(int value) {
+  return value == LOW; // inverted, active low
+}
+// the loop routine runs over and over again forever:
 void loop() {
-  int b = digitalRead(buttonPin);
+  
+  int b = digitalRead(pushButton);
   Serial.println(b);
-  if (s == 0 && pressed(b)) {
-    digitalWrite(ledPin, HIGH); // on
-    s = 1;
-  } else if (s == 1 && !pressed(b)) {
-    s = 2;
-  } else if (s == 2 && pressed(b)) {
-    digitalWrite(ledPin, LOW); // off
-    s = 3;
-  } else if (s == 3 && !pressed(b)) {
-    s = 0;
+  if (state == 0 && pressed(b)) {
+    state = 1;
+    digitalWrite(ledPin, HIGH);
+  } else if (state == 1 && !pressed(b)) {
+    state = 2;
+  } else if (state == 2 && pressed(b)) {
+    state = 3;
+    digitalWrite(ledPin, LOW);
+  } else if (state == 3 && !pressed(b)) {
+    state = 0;
   }
   delay(1);
 }
